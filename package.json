@@ -1,0 +1,71 @@
+{
+  "name": "pixelmvtrans",
+  "version": "1.0.0",
+  "private": true,
+  "author": "gramedcart",
+  "scripts": {
+    "build": "rollup -c",
+    "dev": "rollup -c -w",
+    "start": "electron .",
+    "build2": "electron-builder --windows portable"
+  },
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^17.0.0",
+    "@rollup/plugin-node-resolve": "^11.0.0",
+    "electron": "^17.1.0",
+    "electron-builder": "^22.14.13",
+    "rollup": "^2.3.4",
+    "rollup-plugin-css-only": "^3.1.0",
+    "rollup-plugin-livereload": "^2.0.0",
+    "rollup-plugin-svelte": "^7.0.0",
+    "rollup-plugin-terser": "^7.0.0",
+    "svelte": "^3.0.0"
+  },
+  "dependencies": {
+    "@types/node": "^17.0.21",
+    "axios": "^0.26.0",
+    "electron-is-packaged": "^1.0.2",
+    "electron-reload": "^2.0.0-alpha.1",
+    "iconv-lite": "^0.6.3",
+    "js-base64": "^3.7.2",
+    "open": "^8.4.0",
+    "rollup-plugin-scss": "^3.0.0",
+    "sirv-cli": "^2.0.0",
+    "sweetalert2": "^11.4.4"
+  },
+  "build": {
+    "appId": "net.electron.pixelmvtrans",
+    "asar": true,
+    "files": [
+      "**/*",
+      "!test/*",
+      "!dist/*",
+      "!addon/*"
+    ],
+    "extraResources": [
+      "./ext/**"
+    ],
+    "protocols": {
+      "name": "pixelmvtrans",
+      "schemes": [
+        "pixelmvtrans"
+      ]
+    },
+    "win": {
+      "target": [
+        "zip",
+        "nsis"
+      ],
+      "icon": "./res/icon.png"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    },
+    "directories": {
+      "buildResources": "./resources/installer/",
+      "output": "./dist/",
+      "app": "./"
+    }
+  }
+}
