@@ -32,4 +32,7 @@
 		display: flex;
 		align-items: center;
 	}
+    :global(body) {
+        overflow-y: hidden;
+    }
 </style>

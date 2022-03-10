@@ -61,6 +61,9 @@ function main() {
     electron_1.ipcMain.on("openFindKeyPage", (ev, arg) => {
         (0, open_1.default)("https://github.com/gramedcart/pixelmvtrans/wiki/%EB%B3%B5%ED%98%B8%ED%99%94-%ED%82%A4%EA%B0%92-%EC%96%BB%EA%B8%B0");
     });
+    electron_1.ipcMain.on("dotnet", async () => {
+        (0, open_1.default)(`https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-desktop-6.0.1-windows-x86-installer`);
+    });
     saver.init();
     electron_1.ipcMain.on("setImportIt", (ev, arg) => {
     });

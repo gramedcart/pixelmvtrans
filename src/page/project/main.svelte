@@ -1,6 +1,8 @@
 <script>
     import { proj } from "../../store"
     import { fade } from 'svelte/transition';
+    import Swal from "sweetalert2";
+
     const ipc = require('electron').ipcRenderer
     let projValue = {};
     let qvale = []
@@ -50,9 +52,44 @@
         console.log('saver')
         ipc.send('saver', projValue)
     }
-    function translator(){
-        console.log('translator')
-        ipc.send('translator', formatText(projValue.project.textList))
+    async function translator(){
+        const d = await Swal.fire(
+            {
+                title: "Eztrans 번역을 하시겠습니까?",
+                text: "dotnet 6.0 x86이 설치되어있지 않으면 오류가 발생할 수 있습니다.",
+                icon: "question",
+                showDenyButton: true,
+                showCancelButton: true,
+                confirmButtonText: '예',
+                denyButtonText: '아니요',
+                cancelButtonText: 'dotnet 설치'
+            }
+        )
+        if(d.isConfirmed){
+            await Swal.fire(
+                "완료되었다는 창이 나올 때 까지 아무것도 하지 말아주세요."
+            )
+            console.log('translator')
+            Swal.fire({
+                icon: 'info',
+                title: '번역 중 입니다..',
+                html: '<div id="transi">0%</div>',
+                showConfirmButton: false,
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                allowEnterKey: false
+            })
+            ipc.send('translator', formatText(projValue.project.textList))
+        }
+        else if(!d.isDenied){
+            if(d.isDismissed){
+                console.log('dotnet')
+                ipc.send('dotnet')
+            }
+        }
+        ipc.on("transper", (ev, arg) => {
+            document.querySelector('#transi').innerText = arg
+        })
     }
 
     ipc.on("transData", (ev, arg) => {
@@ -64,6 +101,10 @@
         console.log('pv')
         console.log(pv)
         init(pv)
+        Swal.fire({
+            title: "완료되었습니다",
+            icon: 'success'
+        })
     })
 
     const addto = (key, val,temppp) => { 
@@ -90,20 +131,25 @@
 <main transition:fade>
     <header></header>
     <div id="top-placeholder"></div>
-    <div id="container">
-        {#each qvale as value, i}
-            {#if value == '%placeholder%'}
-                <div class="placeholder"></div>
-            {:else}
-                <textarea class="texts" data-val={`${value[1]}`} on:change={applyChange} on:input={reactiveResize} use:reactiveResize>{value[0]}</textarea>
-            {/if}
-        {/each}
+    <div id="con">
+        <div id="container">
+            {#each qvale as value, i}
+                {#if value == '%placeholder%'}
+                    <div class="placeholder"></div>
+                {:else}
+                    <textarea class="texts" data-val={`${value[1]}`} on:change={applyChange} on:input={reactiveResize} use:reactiveResize>{value[0]}</textarea>
+                {/if}
+            {/each}
+        </div>
     </div>
     <div class="btn" style="left: 15px;" on:click={saver}><i class="fas fa-save"></i></div>
     <div class="btn" style="left: 45px;" on:click={translator}><i class="fas fa-language"></i></div>
 </main>
 {/if}
 <style>
+    #top-placeholder{
+        margin-top: 20px;
+    }
     .btn{
         position: fixed;
         z-index: 2;
@@ -119,6 +165,11 @@
         justify-content: center;
         margin-left: 5vw;
     }
+    #con{
+        overflow-y: scroll;
+        margin-top: 50px;
+        height: calc(100vh - 50px);
+    }
     header{
         z-index: 1;
         width: 100vw;
@@ -129,7 +180,6 @@
         background-color: white;
     }
     .texts{
-        height: 10vh;
         width: 90vw;
         overflow-y: hidden;
         resize: none;
@@ -140,9 +190,6 @@
         background-color: #212121;
         margin-top: 3vh;
         margin-bottom: 3vh;
-    }
-    #top-placeholder{
-        margin-top: 60px;
     }
     :global(body) {
         margin:0px;

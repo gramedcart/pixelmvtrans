@@ -42,6 +42,10 @@ export function main(){
         open("https://github.com/gramedcart/pixelmvtrans/wiki/%EB%B3%B5%ED%98%B8%ED%99%94-%ED%82%A4%EA%B0%92-%EC%96%BB%EA%B8%B0")
     })
 
+    ipcMain.on("dotnet",async () => {
+        open(`https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-desktop-6.0.1-windows-x86-installer`)
+    })
+
     saver.init()
 
     ipcMain.on("setImportIt", (ev, arg) => {

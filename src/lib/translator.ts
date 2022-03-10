@@ -1,5 +1,6 @@
 import { spawn } from "child_process"
 import path from "path"
+import detect from "detect-port"
 import axios from "axios";
 
 function sleep(ms:number) {
@@ -13,6 +14,9 @@ export class Translator{
     async init():Promise<boolean>{
         console.log("translator init")
         await sleep(2000)
+        if(await detect(8000) !== 8000){
+            return false
+        }
         return true
     }
     
@@ -29,6 +33,7 @@ export class Translator{
             )
             return a.data
         } catch (error) {
+            console.log(text)
             return text
         }
     }

@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Translator = void 0;
 const child_process_1 = require("child_process");
 const path_1 = __importDefault(require("path"));
+const detect_port_1 = __importDefault(require("detect-port"));
 const axios_1 = __importDefault(require("axios"));
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -17,6 +18,9 @@ class Translator {
     async init() {
         console.log("translator init");
         await sleep(2000);
+        if (await (0, detect_port_1.default)(8000) !== 8000) {
+            return false;
+        }
         return true;
     }
     async translate(text) {
@@ -30,6 +34,7 @@ class Translator {
             return a.data;
         }
         catch (error) {
+            console.log(text);
             return text;
         }
     }

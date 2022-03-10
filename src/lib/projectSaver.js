@@ -45,9 +45,12 @@ function init() {
             mainWindow_1.mwindow.webContents.send("error", "Eztrans 실행 도중 오류가 발생했습니다.<br>보안프로그램등을 확인해 주세요");
         }
         let Translated = arg;
-        for (const i in arg) {
+        for (let i = 0; i < arg.length; i++) {
             Translated[i][0] = await trans.translate(arg[i][0]);
-            console.log(Translated[i][0]);
+            if (i % 10 == 0) {
+                console.log(i);
+                mainWindow_1.mwindow.webContents.send("transper", `${Math.round(i / arg.length * 10000) / 100}%`);
+            }
         }
         mainWindow_1.mwindow.webContents.send("transData", arg);
     });
