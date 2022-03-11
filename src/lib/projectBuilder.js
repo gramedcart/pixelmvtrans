@@ -77,6 +77,27 @@ async function initProject(sourceDir, gameDir) {
             console.log('waiting..');
             await sleep(1000);
         }
+        const q = dat.fontList;
+        for (const i in q) {
+            function changer(d) {
+                d.fontName = 'hangul';
+                d.imageFontFlag = false;
+                d.imageId = -1;
+                d.letterLayout = '';
+                d.ttfName = 'hangul';
+                d.antialiasDisabled = false;
+                if (d.localeSettings !== undefined) {
+                    if (d.localeSettings.en_US !== undefined) {
+                        d.localeSettings.en_US = changer(d.localeSettings.en_US);
+                    }
+                    if (d.localeSettings.ja_JP !== undefined) {
+                        d.localeSettings.ja_JP = changer(d.localeSettings.ja_JP);
+                    }
+                }
+                return d;
+            }
+            q[i] = changer(q[i]);
+        }
         mainWindow_1.mwindow.webContents.send("open", { project: globalThis.project });
         console.log('open');
     }

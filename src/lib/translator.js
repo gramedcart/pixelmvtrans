@@ -11,6 +11,7 @@ const axios_1 = __importDefault(require("axios"));
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
+const reg = /\\.\[.+\]|\\.\[\]/g;
 class Translator {
     constructor() {
         this.process = (0, child_process_1.spawn)(path_1.default.join(oPath, "ext", "eztrans", "EztransServer.exe"));
@@ -24,17 +25,47 @@ class Translator {
         return true;
     }
     async translate(text) {
+        function checker(str) {
+            const qstr = (str.normalize());
+            return (str.includes('\\') ||
+                str.includes('?'));
+        }
         try {
+            text = text.replaceAll('？', '■');
+            // text = text.replaceAll('?', '■')
+            if (checker(text)) {
+                console.log('skip regex');
+                return text;
+            }
             const a = await axios_1.default.get('http://localhost:8000/', {
                 params: {
                     text: text
                 },
-                timeout: 10000
+                timeout: 1000
             });
-            return a.data;
+            const c = a.data;
+            // if(c.includes('?')){
+            //     console.log('includes unknown')
+            //     return text
+            // }
+            return c.replaceAll('■', '？');
         }
         catch (error) {
             console.log(text);
+            console.log(text.length);
+            try {
+                console.log(await (0, detect_port_1.default)(8000));
+                try {
+                    this.process.kill();
+                }
+                catch (error) {
+                    console.log('error when killing');
+                }
+                this.process = (0, child_process_1.spawn)(path_1.default.join(oPath, "ext", "eztrans", "EztransServer.exe"));
+                console.log('new pro');
+                await sleep(3000);
+            }
+            catch (error) { }
             return text;
         }
     }

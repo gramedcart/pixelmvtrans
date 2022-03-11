@@ -6,6 +6,7 @@ import axios from "axios";
 function sleep(ms:number) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
+const reg = /\\.\[.+\]|\\.\[\]/g
 
 export class Translator{
     process = spawn(path.join(oPath,"ext","eztrans","EztransServer.exe"))
@@ -19,21 +20,53 @@ export class Translator{
         }
         return true
     }
+
     
     async translate(text:string) {
+        function checker(str:string) {
+            const qstr = (str.normalize())
+            return (
+                str.includes('\\') ||
+                str.includes('?')
+            )
+        }
         try {
+            text = text.replaceAll('？', '■')
+            // text = text.replaceAll('?', '■')
+            if(checker(text)){
+                console.log('skip regex')
+                return text
+            }
             const a =  await axios.get(
                 'http://localhost:8000/',
                 {
                     params: {
                         text: text
                     },
-                    timeout: 10000
+                    timeout: 1000
                 }
             )
-            return a.data
+            const c:string = a.data
+            // if(c.includes('?')){
+            //     console.log('includes unknown')
+            //     return text
+            // }
+            return c.replaceAll('■', '？')
         } catch (error) {
             console.log(text)
+            console.log(text.length)
+            try {
+                console.log(await detect(8000))
+                try {
+                    this.process.kill()
+                } catch (error) {
+                    console.log('error when killing')
+                }
+
+                this.process = spawn(path.join(oPath,"ext","eztrans","EztransServer.exe"))
+                console.log('new pro')
+                await sleep(3000)
+            } catch (error) {}
             return text
         }
     }

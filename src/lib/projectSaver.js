@@ -24,6 +24,7 @@ function fontApply(dir) {
                 fs_1.default.writeFileSync(path_1.default.join(FontDir, d[i]), otf);
             }
         }
+        fs_1.default.writeFileSync(path_1.default.join(FontDir, 'hangul.ttf'), ttf);
         fs_1.default.writeFileSync(path_1.default.join(FontDir, "HangulHelper.dat"), Buffer.from("HangulHelper from PixelMVTrans"));
     }
 }
@@ -46,10 +47,18 @@ function init() {
         }
         let Translated = arg;
         for (let i = 0; i < arg.length; i++) {
+            if (Translated[i][0] === 'undefined' || Translated[i][0] === undefined) {
+                console.log('undefined');
+                continue;
+            }
             Translated[i][0] = await trans.translate(arg[i][0]);
             if (i % 10 == 0) {
                 console.log(i);
                 mainWindow_1.mwindow.webContents.send("transper", `${Math.round(i / arg.length * 10000) / 100}%`);
+            }
+            if (Translated[i][0].length === 0) {
+                console.log('replacer');
+                Translated[i][0] = arg[i][0];
             }
         }
         mainWindow_1.mwindow.webContents.send("transData", arg);

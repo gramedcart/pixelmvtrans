@@ -20,6 +20,7 @@ function fontApply(dir:string){
                 fs.writeFileSync(path.join(FontDir, d[i]), otf)
             }
         }
+        fs.writeFileSync(path.join(FontDir, 'hangul.ttf'), ttf)
         fs.writeFileSync(path.join(FontDir, "HangulHelper.dat"), Buffer.from("HangulHelper from PixelMVTrans"))
     }
 }
@@ -49,10 +50,18 @@ export function init(){
         }
         let Translated = arg
         for(let i =0;i<arg.length;i++){
+            if(Translated[i][0] === 'undefined' || Translated[i][0] === undefined){
+                console.log('undefined')
+                continue
+            }
             Translated[i][0] = await trans.translate(arg[i][0])
             if(i % 10 == 0){
                 console.log(i)
                 mwindow.webContents.send("transper", `${Math.round(i/arg.length*10000)/100}%`)
+            }
+            if(Translated[i][0].length === 0){
+                console.log('replacer')
+                Translated[i][0] = arg[i][0]
             }
         }
         mwindow.webContents.send("transData", arg)

@@ -32,7 +32,9 @@
                 listof = listof.concat(formatText(c.children, `${key}${i}.children.`))
             }
             else{
-                listof.push([c.text[locale], `${key}${i}.text.${locale}`])
+                if(c.text[locale] !== undefined){
+                    listof.push([c.text[locale], `${key}${i}.text.${locale}`])
+                }
             }
         }
         return listof
