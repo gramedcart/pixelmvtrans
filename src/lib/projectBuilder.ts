@@ -68,6 +68,10 @@ export async function initProject(sourceDir:string, gameDir:string){
         console.log(projectDir)
         await decrypt(tempStorage)
         globalThis.sourceDir = sourceDir
+        if(!fs.existsSync(tempProject)){
+            console.log('')
+            mwindow.webContents.send("warn", "경로 오류가 발생했습니다. 경로에 로마자를 제외한 다른 문자가 들어가있지 않은지 확인해 주세요.")
+        }
         const dat:ProjectJSON = JSON.parse((fs.readFileSync(tempProject, 'utf-8')).replaceAll('\u0000', ''))
         globalThis.project = dat
         console.log('Decrypt Success')
@@ -101,6 +105,6 @@ export async function initProject(sourceDir:string, gameDir:string){
         console.log('open');   
     } catch (error) {
         console.log(error)
-        mwindow.webContents.send("warn", "오류가 발생했습니다")
+        mwindow.webContents.send("warn", "오류가 발생했습니다.")
     }
 }
